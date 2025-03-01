@@ -13,7 +13,7 @@ embeddings = OllamaEmbeddings(
 
 
 def ingest_docs():
-    # Load CSV using CSVLoader (Assumes first row is the header)
+    # Load CSV using CSVLoader
     loader = CSVLoader(file_path="./csv/KEDB.csv", encoding="utf-8")
     raw_documents = loader.load()
 
@@ -21,17 +21,17 @@ def ingest_docs():
 
     documents = []
     for doc in raw_documents:
-        metadata = doc.metadata  # This will include the headers from the CSV
-        content_dict = doc.to_dict()  # Convert to dictionary format
+        metadata = doc.metadata  # This contains column names from CSV as keys
+        page_content = doc.page_content  # Contains raw text of the row
 
         try:
-            # Extracting values from CSV
-            number = content_dict["number"]
-            version = content_dict["version"]
-            short_desc = content_dict["short description"]
-            text = content_dict["text"]
-            author = content_dict["author"]
-            kb_category = content_dict["kb_category"]
+            # Extracting values from CSV (metadata should contain headers as keys)
+            number = metadata.get("number", "").strip()
+            version = metadata.get("version", "").strip()
+            short_desc = metadata.get("short description", "").strip()
+            text = metadata.get("text", "").strip()
+            author = metadata.get("author", "").strip()
+            kb_category = metadata.get("kb_category", "").strip()
 
             # Creating new document with relevant metadata and combined text
             new_doc = Document(
