@@ -1,3 +1,5 @@
+import os
+
 from dotenv import load_dotenv
 from langchain_community.vectorstores import FAISS
 from langchain_ollama import OllamaEmbeddings
@@ -14,7 +16,7 @@ embeddings = OllamaEmbeddings(
 
 def ingest_docs():
     # Load CSV using CSVLoader
-    loader = CSVLoader(file_path="./csv/KEDB.csv", encoding="utf-8")
+    loader = CSVLoader(file_path=os.environ["FOLDER_PATH"])
     raw_documents = loader.load()
 
     print(f"Loaded {len(raw_documents)} documents")
@@ -47,16 +49,16 @@ def ingest_docs():
 
     # Store in FAISS vector store
     vectorstore = FAISS.from_documents(documents, embeddings)
-    vectorstore.save_local("faiss_index_react")
+    vectorstore.save_local(os.environ["FAISS_INDEX"])
 
     print("**** Loading to vector store done ****")
 
     # Load vector store
-    new_vectorstore = FAISS.load_local(
-        "faiss_index_react",
-        embeddings,
-        allow_dangerous_deserialization=True
-    )
+    # new_vectorstore = FAISS.load_local(
+    #     "faiss_index_react",
+    #     embeddings,
+    #     allow_dangerous_deserialization=True
+    # )
 
 
 if __name__ == "__main__":

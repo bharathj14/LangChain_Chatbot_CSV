@@ -8,10 +8,7 @@ from langchain import  hub
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.vectorstores import FAISS
 from langchain_ollama import OllamaEmbeddings, OllamaLLM
-from langchain_pinecone import PineconeVectorStore
-from sympy.utilities.codegen import Argument
 
-from ingestion import embeddings
 
 load_dotenv()
 
@@ -23,10 +20,10 @@ def run_llm(query: str, chat_history: List[Dict[str, Any]] =[]):
         temperature=0
     )
 
-    # docsearch =PineconeVectorStore(embedding=embeddings,index_name=os.environ["INDEX_NAME"])
+
     new_vectorstore = FAISS.load_local(
-        "faiss_index_react",
-        embeddings,
+        folder_path=os.environ["FAISS_INDEX_PATH"],
+        embeddings=embeddings,
         allow_dangerous_deserialization=True
     )
     chatLLM = OllamaLLM(
@@ -58,6 +55,6 @@ def run_llm(query: str, chat_history: List[Dict[str, Any]] =[]):
 
 
 if __name__=="__main__":
-    res = run_llm(query="what is langchain Chain?")
+    res = run_llm(query="can i know about Troubleshooting network connectivity issues")
     print(res)
 
